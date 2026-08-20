@@ -34,6 +34,7 @@ models/*.joblib
 
 # Keep metadata
 !models/metadata.json
+!models/pipeline.pkl
 
 # Raw Kaggle source files (large, not redistributed — see README.md)
 data/kaggle_raw/
