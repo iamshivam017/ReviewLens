@@ -36,6 +36,25 @@ def load_pipeline():
     return joblib.load(PIPELINE_PATH)
 
 
+def train_pipeline_if_missing() -> bool:
+    """
+    Train the model once if ``models/pipeline.pkl`` is missing.
+
+    Returns True when the trained pipeline exists after this call.
+    """
+    if PIPELINE_PATH.exists():
+        return True
+
+    dataset_path = DATA_DIR / "raw" / "reviews.csv"
+    if not dataset_path.exists():
+        return False
+
+    from train import main as train_main
+
+    train_main()
+    return PIPELINE_PATH.exists()
+
+
 @st.cache_data(show_spinner=False)
 def load_metadata_cached():
     return load_metadata()

@@ -23,7 +23,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import streamlit as st
 
-from src.dashboard_utils import get_active_dataset, load_metadata_cached, load_pipeline
+from src.dashboard_utils import (
+    get_active_dataset,
+    load_metadata_cached,
+    load_pipeline,
+    train_pipeline_if_missing,
+)
 from src.pages import comparison, explorer, export, overview, performance, predict, summary, trends
 from src.utils import PIPELINE_PATH
 
@@ -80,9 +85,21 @@ def main() -> None:
     # ── Model guard ───────────────────────────────────────────────────────────
     pipeline = load_pipeline()
     if pipeline is None:
+        st.warning(
+            "Trained model not found in this deployment. "
+            "Starting one-time training from `data/raw/reviews.csv`."
+        )
+        with st.spinner("Training model (first run only). This may take 1-3 minutes..."):
+            if train_pipeline_if_missing():
+                load_pipeline.clear()
+                load_metadata_cached.clear()
+                pipeline = load_pipeline()
+
+    if pipeline is None:
         st.error(
             "⚠️ **Model not found.**\n\n"
-            "Run these two commands, then refresh:\n\n"
+            "Automatic training could not run because required files are missing.\n\n"
+            "Run these commands in your project environment, then redeploy:\n\n"
             "```\npython prepare_dataset.py\npython train.py\n```"
         )
         st.stop()

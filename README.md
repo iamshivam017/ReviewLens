@@ -209,6 +209,25 @@ Open your browser at **http://localhost:8501**
 
 ---
 
+## ☁️ Hosting from GitHub (Streamlit Cloud)
+
+`models/pipeline.pkl` is intentionally not stored in Git, so a fresh hosted
+deployment may start without a trained model file.
+
+ReviewLens now auto-trains once on first launch (using `data/raw/reviews.csv`),
+then continues normally after the model is generated.
+
+If auto-training cannot run (for example, required data files are missing), run:
+
+```bash
+python prepare_dataset.py
+python train.py
+```
+
+Then redeploy.
+
+---
+
 ## 📓 Jupyter Notebook (Viva Walkthrough)
 
 `ReviewLens_Notebook.ipynb` is a full, narrated walkthrough of the entire
